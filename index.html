@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Falcon — UAE Market Intelligence</title>
+<style>
+  /* Bright e-commerce theme (Amazon-style): dark navy header, clean white content on light-gray page. */
+  :root{
+    --page:#eaeded; --card:#ffffff; --line:#d5dbdb; --line2:#eef1f1;
+    --ink:#0f1111; --dim:#565959; --faint:#8a9394;
+    --nav:#131921; --nav2:#232f3e;
+    --accent:#ff9900; --accent-d:#e88a00; --link:#007185; --link-h:#c7511f;
+    --good:#067d62; --good-bg:#e6f4f1; --warn:#8a6d3b; --warn-bg:#fdf6e3; --bad:#c7511f; --bad-bg:#fdecea;
+    --shadow:0 1px 4px rgba(15,17,17,.10);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--page);color:var(--ink);font:14px/1.5 "Amazon Ember",-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+  a{color:var(--link);text-decoration:none} a:hover{color:var(--link-h);text-decoration:underline}
+  /* header */
+  header{display:flex;align-items:center;gap:16px;padding:12px 24px;background:var(--nav);color:#fff}
+  header h1{font-size:19px;margin:0;font-weight:700;display:flex;align-items:center;gap:8px}
+  header h1 .mk{color:var(--accent)}
+  header .sub{color:#c7d0d6;font-size:12px;margin-top:2px}
+  .stats{display:flex;gap:10px;margin-left:auto;flex-wrap:wrap}
+  .stat{background:var(--nav2);border:1px solid #35434f;border-radius:8px;padding:7px 13px;min-width:92px}
+  .stat b{display:block;font-size:16px;color:#fff} .stat span{color:#9aa7b0;font-size:10.5px;text-transform:uppercase;letter-spacing:.4px}
+  /* nav tabs */
+  nav{display:flex;gap:4px;padding:0 24px;background:var(--nav2)}
+  nav button{background:none;border:0;border-bottom:3px solid transparent;color:#cfd6dc;padding:11px 16px;cursor:pointer;font-size:13.5px;font-weight:600}
+  nav button:hover{color:#fff}
+  nav button.on{color:#fff;border-bottom-color:var(--accent)}
+  main{padding:18px 24px 70px;max-width:1600px;margin:0 auto}
+  .controls{display:flex;gap:10px;align-items:center;margin-bottom:14px;color:var(--dim);font-size:12.5px;flex-wrap:wrap}
+  .controls select,.controls input{background:#fff;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:7px 9px;font-size:13px}
+  .controls select:focus,.controls input:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+  /* table as a white card */
+  .tablewrap{background:var(--card);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+  table{width:100%;border-collapse:collapse}
+  th{color:var(--dim);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:11px 12px;border-bottom:2px solid var(--line);background:#f7f8f8;white-space:nowrap}
+  td{padding:11px 12px;border-bottom:1px solid var(--line2);vertical-align:middle}
+  tr:last-child td{border-bottom:0}
+  tbody tr{cursor:pointer} tbody tr:hover td{background:#f7fafa}
+  .prod{display:flex;align-items:center;gap:11px;max-width:440px}
+  .prod img{width:44px;height:44px;object-fit:contain;background:#fff;border:1px solid var(--line2);border-radius:6px;flex:none}
+  .prod .ttl{font-weight:600;color:var(--ink);line-height:1.35}
+  .prod .ttl:hover{color:var(--link-h)}
+  .cat{color:var(--dim);font-size:11.5px;margin-top:2px}
+  .brand{color:#232f3e;font-weight:700}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .big{font-weight:700}
+  .bar{height:7px;border-radius:5px;background:#eef1f1;overflow:hidden;min-width:80px;margin:3px 0}
+  .bar>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#febd69)}
+  .pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700}
+  .opp-hi{background:var(--good-bg);color:var(--good)} .opp-md{background:var(--warn-bg);color:var(--warn)} .opp-lo{background:#eef1f1;color:var(--dim)}
+  .tag-new{background:#e7f0fb;color:#0f5a9c} .tag-rise{background:var(--warn-bg);color:var(--warn)}
+  .flag-bad{color:var(--bad);font-weight:600} .flag-good{color:var(--good);font-weight:600}
+  .conf{display:inline-flex;gap:3px;vertical-align:middle} .conf i{width:7px;height:7px;border-radius:50%;background:#d5dbdb} .conf i.on{background:var(--good)}
+  /* market map */
+  .heat{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+  .cell{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px;position:relative;overflow:hidden;box-shadow:var(--shadow)}
+  .cell h3{margin:0 0 8px;font-size:14px;color:var(--ink)}
+  .cell .big{font-size:26px;font-weight:800;color:var(--ink)}
+  .cell .row{display:flex;justify-content:space-between;color:var(--dim);font-size:12.5px;margin-top:5px}
+  .cell .row b{color:var(--ink)}
+  .cell .heatbar{position:absolute;left:0;bottom:0;height:4px;background:linear-gradient(90deg,var(--accent),#febd69)}
+  .muted{color:var(--dim)}
+  /* dialog */
+  dialog{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:12px;max-width:640px;width:92%;padding:0;box-shadow:0 12px 40px rgba(0,0,0,.25)}
+  dialog::backdrop{background:rgba(0,0,0,.45)}
+  .dh{padding:16px 18px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}
+  .dh img{width:60px;height:60px;object-fit:contain;background:#fff;border:1px solid var(--line2);border-radius:8px}
+  .db{padding:16px 18px}
+  .kv{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+  .kv div{background:#f7f8f8;border:1px solid var(--line);border-radius:9px;padding:10px 12px;text-align:center}
+  .kv b{display:block;font-size:18px} .kv span{color:var(--dim);font-size:11px}
+  svg text{fill:var(--dim);font-size:10px}
+  .x{margin-left:auto;background:none;border:0;color:var(--dim);font-size:22px;cursor:pointer;line-height:1}
+  .banner{background:#fff8ec;border:1px solid #ffe2b0;color:#7a5b1e;border-radius:8px;padding:7px 12px;font-size:12px;margin-bottom:12px}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1><span class="mk">🦅</span> Falcon <span style="font-weight:400;color:#c7d0d6;font-size:14px">UAE Market Intelligence</span></h1>
+    <div class="sub" id="sub">loading…</div>
+  </div>
+  <div class="stats" id="stats"></div>
+</header>
+<nav>
+  <button data-tab="opps" class="on">🎯 Opportunities</button>
+  <button data-tab="sellers">🔥 Top Sellers</button>
+  <button data-tab="trending">📈 Trending</button>
+  <button data-tab="map">🗺️ Market Map</button>
+</nav>
+<main>
+  <div id="freshness"></div>
+  <div class="controls" id="controls"></div>
+  <div id="view"></div>
+</main>
+<dialog id="dlg"></dialog>
+<script>
+const $ = (s,r=document)=>r.querySelector(s);
+const money=n=>n==null?'—':'AED '+Math.round(n).toLocaleString();
+const k=n=>n==null?'—':n>=1000?(n/1000).toFixed(1)+'k':Math.round(n);
+let TAB='opps', SORT='units', DATA=null;
+
+// ---- data layer: static bundle (data.json) if deployed, else live API ----
+async function jf(u){const r=await fetch(u);return r.json();}
+function catOK(c){return c&&!String(c).startsWith('search:');}
+
+async function getSummary(){ return DATA?DATA.summary:jf('/api/summary'); }
+async function getCatlist(){
+  if(DATA){const m=new Map();for(const r of DATA.products){if(catOK(r.category))m.set(r.category,(m.get(r.category)||0)+1);}
+    return [...m].map(([category,n])=>({category,n})).sort((a,b)=>b.n-a.n);}
+  return jf('/api/catlist');
+}
+async function getCategories(){ return DATA?DATA.categories:jf('/api/categories'); }
+async function getTrending(){
+  if(DATA)return DATA.products.filter(r=>r.trend).sort((a,b)=>(b.units_mid||0)-(a.units_mid||0)).slice(0,300);
+  return jf('/api/trending');
+}
+async function getProducts(sort,f){
+  if(DATA){
+    let rows=DATA.products.filter(r=>r.confidence>=(f.minConf||0)&&catOK(r.category));
+    if(f.category)rows=rows.filter(r=>r.category===f.category);
+    if(f.minPrice)rows=rows.filter(r=>r.price!=null&&r.price>=+f.minPrice);
+    if(f.maxPrice)rows=rows.filter(r=>r.price!=null&&r.price<=+f.maxPrice);
+    if(f.q){const t=f.q.toLowerCase();rows=rows.filter(r=>(r.title||'').toLowerCase().includes(t)||(r.brand||'').toLowerCase().includes(t));}
+    rows=[...rows].sort((a,b)=> sort==='opp'?b.opp-a.opp : sort==='revenue'?(b.revenue_mid||0)-(a.revenue_mid||0) : (b.units_mid||0)-(a.units_mid||0));
+    return rows.slice(0,400);
+  }
+  const p=new URLSearchParams({sort,limit:'400',minConf:f.minConf||'0'});
+  for(const key of ['category','q','minPrice','maxPrice'])if(f[key])p.set(key,f[key]);
+  return jf('/api/products?'+p.toString());
+}
+async function getProduct(id){
+  if(DATA){const p=DATA.products.find(r=>r.product_id===id);return {product:{id,title:p?.title,image:p?.image,url:p?.url,category:p?.category,brand:p?.brand},
+    estimate:p?{units_mid:p.units_mid,revenue_mid_aed:p.revenue_mid,opp_score:p.opp,method:p.method,confidence:p.confidence}:null,
+    history:[],row:p};}
+  return jf('/api/product/'+encodeURIComponent(id));
+}
+
+function oppPill(o){const c=o>=55?'opp-hi':o>=35?'opp-md':'opp-lo';return `<span class="pill ${c}">${o}</span>`;}
+function conf(c){let n=Math.round(c*4),s='';for(let i=0;i<4;i++)s+=`<i class="${i<n?'on':''}"></i>`;return `<span class="conf" title="confidence ${(c*100)|0}%">${s}</span>`;}
+
+async function loadSummary(){
+  const s=await getSummary();
+  $('#sub').textContent=`${(s.nProducts||0).toLocaleString()} products tracked · ${(s.estimated||0).toLocaleString()} estimated`;
+  const amz=(s.runs||[]).find(r=>r.source==='scout-amazon');
+  const last=s.generatedAt||(amz&&amz.ts);
+  $('#stats').innerHTML=[
+    ['Products',(s.nProducts||0).toLocaleString()],
+    ['Calibration',`${s.calN||0} pts`],
+    ['Categories',s.categories||'—'],
+    ['Updated',last?new Date(last).toLocaleDateString():'—'],
+  ].map(([a,b])=>`<div class="stat"><b>${b}</b><span>${a}</span></div>`).join('');
+}
+
+const FILT={category:'',q:'',minPrice:'',maxPrice:''};
+async function renderTable(sort){
+  SORT=sort;
+  const rows=await getProducts(sort,{...FILT,minConf:TAB==='opps'?0.4:0});
+  paintRows(rows);
+}
+function paintRows(rows){
+  const cnt=$('#count'); if(cnt)cnt.textContent=`${rows.length} shown`;
+  const maxU=Math.max(...rows.map(r=>r.units_mid||0),1);
+  const trendTag=r=>r.trend?`<span class="pill ${r.trend==='movers'?'tag-rise':'tag-new'}" style="margin-left:6px">${r.trend==='movers'?'📈 rising':'🆕 new'}</span>`:'';
+  const comp=r=>r.amazon_seller===1?' · <span class="flag-bad">⚠ Amazon sells this</span>':(r.other_sellers===0&&r.sold_by?' · <span class="flag-good">single seller</span>':'');
+  $('#view').innerHTML=`<div class="tablewrap"><table><thead><tr>
+    <th>Product</th><th class="num">Est units/mo</th><th>Confidence</th>
+    <th class="num">Price</th><th class="num">Est rev/mo</th><th class="num">Reviews</th><th class="num">Rating</th><th class="num">Opp</th>
+  </tr></thead><tbody>${rows.map(r=>`
+    <tr data-id="${r.product_id}">
+      <td><div class="prod"><img src="${r.image||''}" onerror="this.style.visibility='hidden'"/>
+        <div><span class="ttl"><a href="${r.url||'#'}" target="_blank">${(r.title||r.product_id).slice(0,74)}</a></span>${trendTag(r)}
+        <div class="cat">${r.brand?`<span class="brand">${r.brand}</span> · `:''}${r.category||''}${comp(r)}</div></div></div></td>
+      <td class="num"><span class="big">${k(r.units_mid)}</span><div class="bar"><i style="width:${Math.min(100,(r.units_mid/maxU)*100)}%"></i></div>
+        <span class="cat">${k(r.units_lo)}–${k(r.units_hi)}${r.bought?' · '+r.bought+'+ bought':''}</span></td>
+      <td>${conf(r.confidence)} <span class="cat">${r.method}</span></td>
+      <td class="num">${money(r.price)}</td>
+      <td class="num">${money(r.revenue_mid)}</td>
+      <td class="num">${r.reviews==null?'—':r.reviews.toLocaleString()}</td>
+      <td class="num">${r.rating==null?'—':r.rating+'★'}</td>
+      <td class="num">${oppPill(r.opp)}</td>
+    </tr>`).join('')}</tbody></table></div>`;
+  $('#view').querySelectorAll('tr[data-id]').forEach(tr=>tr.onclick=e=>{if(e.target.tagName!=='A')openDetail(tr.dataset.id);});
+}
+async function renderTrending(){ paintRows(await getTrending()); }
+
+async function renderMap(){
+  const cats=await getCategories();
+  const maxU=Math.max(...cats.map(c=>c.units),1);
+  $('#view').innerHTML=`<div class="heat">${cats.map(c=>`
+    <div class="cell"><div class="heatbar" style="width:${Math.max(8,(c.units/maxU)*100)}%"></div>
+      <h3>${c.category}</h3>
+      <div class="big">${k(c.units)}<span class="muted" style="font-size:13px;font-weight:400"> u/mo</span></div>
+      <div class="row"><span>Est revenue</span><b>${money(c.revenue)}</b></div>
+      <div class="row"><span>Openings</span><b>${c.openings}</b></div>
+      <div class="row"><span>Products · med price</span><span>${c.n} · ${money(c.medPrice)}</span></div>
+    </div>`).join('')}</div>`;
+}
+
+async function openDetail(id){
+  const d=await getProduct(id);
+  const p=d.product,e=d.estimate,h=d.history||[];
+  const ranks=h.filter(x=>x.rank!=null);
+  let spark='';
+  if(ranks.length>1){const w=560,ht=60,mn=Math.min(...ranks.map(r=>r.rank)),mx=Math.max(...ranks.map(r=>r.rank));
+    const pts=ranks.map((r,i)=>`${(i/(ranks.length-1))*w},${((r.rank-mn)/((mx-mn)||1))*ht}`).join(' ');
+    spark=`<svg width="${w}" height="${ht+16}"><polyline points="${pts}" fill="none" stroke="#ff9900" stroke-width="2"/><text x="0" y="${ht+14}">rank over time (lower = better)</text></svg>`;}
+  const det=[...h].reverse().find(x=>x.list_type==='detail')||d.row;
+  const comp=det?(det.amazon_seller===1?'<span class="flag-bad">⚠ Sold by Amazon — hard to beat</span>':(det.sold_by?`Sold by <b>${det.sold_by}</b>${det.other_sellers===0?' · single seller (clean listing)':' · has other sellers'}`:(det.other_sellers?'multiple sellers compete':'—'))):'not deep-scanned yet';
+  $('#dlg').innerHTML=`<div class="dh"><img src="${p.image||''}"/><div><b>${(p.title||p.id).slice(0,80)}</b>
+    <div class="cat">${p.brand?`<span class="brand">${p.brand}</span> · `:''}${p.category||''} · <a href="${p.url}" target="_blank">open on Amazon ↗</a></div></div>
+    <button class="x" onclick="dlg.close()">✕</button></div>
+    <div class="db">
+    <div class="kv">
+      <div><b>${e?k(e.units_mid):'—'}</b><span>est units/mo</span></div>
+      <div><b>${e?money(e.revenue_mid_aed):'—'}</b><span>est rev/mo</span></div>
+      <div><b>${e?(e.opp_score??'—'):'—'}</b><span>opportunity</span></div>
+    </div>
+    <div class="muted" style="font-size:12.5px;margin-bottom:10px">Competition: ${comp}</div>
+    ${spark||'<div class="muted" style="font-size:12px">Trend history builds up as the daily scans accrue.</div>'}
+    <div class="muted" style="margin-top:12px;font-size:12px">method: ${e?e.method:'—'} · confidence ${e?Math.round(e.confidence*100):'—'}%</div>
+    </div>`;
+  $('#dlg').showModal();
+}
+
+async function setControls(){
+  if(TAB==='map'){$('#controls').innerHTML='<span>Categories by estimated monthly demand (UAE). Wider bar = more sales volume.</span>';return;}
+  if(TAB==='trending'){$('#controls').innerHTML='<span id="count" class="muted"></span><span class="muted" style="margin-left:8px">🆕 new releases + 📈 movers &amp; shakers — emerging products before they saturate.</span>';return;}
+  const cats=await getCatlist();
+  $('#controls').innerHTML=`Sort <select id="sortSel">
+    <option value="units">Est sales/mo</option><option value="opp">Opportunity</option><option value="revenue">Est revenue/mo</option></select>
+    <select id="catSel"><option value="">All categories (${cats.length})</option>
+      ${cats.map(c=>`<option value="${c.category.replace(/"/g,'&quot;')}">${c.category} (${c.n})</option>`).join('')}</select>
+    <input id="qBox" placeholder="search product or brand…" style="width:170px"/>
+    <input id="minP" placeholder="min AED" style="width:80px"/>
+    <input id="maxP" placeholder="max AED" style="width:80px"/>
+    <span id="count" class="muted"></span>
+    <span class="muted" style="margin-left:auto">${TAB==='opps'?'confidence ≥ 40% — real, beatable openings':'all tracked products'}</span>`;
+  $('#sortSel').value=TAB==='opps'?'opp':'units';
+  $('#sortSel').onchange=e=>renderTable(e.target.value);
+  $('#catSel').onchange=e=>{FILT.category=e.target.value;renderTable(SORT);};
+  let t; const deb=fn=>{clearTimeout(t);t=setTimeout(fn,300);};
+  $('#qBox').oninput=e=>{FILT.q=e.target.value;deb(()=>renderTable(SORT));};
+  $('#minP').oninput=e=>{FILT.minPrice=e.target.value;deb(()=>renderTable(SORT));};
+  $('#maxP').oninput=e=>{FILT.maxPrice=e.target.value;deb(()=>renderTable(SORT));};
+}
+
+async function show(tab){
+  TAB=tab;FILT.category='';FILT.q='';FILT.minPrice='';FILT.maxPrice='';
+  document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));
+  await setControls();
+  if(tab==='map')await renderMap();
+  else if(tab==='trending')await renderTrending();
+  else await renderTable(tab==='opps'?'opp':'units');
+}
+
+async function boot(){
+  try{const r=await fetch('./data.json',{cache:'no-store'});if(r.ok)DATA=await r.json();}catch{}
+  if(DATA&&DATA.summary&&DATA.summary.generatedAt)
+    $('#freshness').innerHTML=`<div class="banner">📅 Data snapshot from ${new Date(DATA.summary.generatedAt).toLocaleString()} — refreshed automatically each day.</div>`;
+  document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>show(b.dataset.tab));
+  await loadSummary(); show('opps');
+}
+boot();
+</script>
+</body>
+</html>
