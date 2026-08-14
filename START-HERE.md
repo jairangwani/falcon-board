@@ -8,9 +8,9 @@ description: The generated map of deploy — what this repo is, where its code l
 
 # START HERE — deploy
 
-**This repo does not say what it is.** Neither `spine/manifest.json` nor `README.md` carries a
-name or a summary, so none is shown — inventing one here would make this file a source instead
-of a map. Add it to whichever of those two files this repo keeps.
+**`deploy` does not say what it is.** Neither `spine/manifest.json` nor `README.md` in this
+repo carries a name or a summary, so none is shown — inventing one here would make this file a
+source instead of a map. Add it to whichever of those two files `deploy` keeps.
 
 ## Where the code lives
 
@@ -20,7 +20,7 @@ of a map. Add it to whichever of those two files this repo keeps.
 
 ## The documents
 
-0 documents, grouped by folder. 0 carry a `description:` in their own front-matter; **0 do not** and appear as a bare path.
+**deploy** has 0 documents, grouped by folder. 0 carry a `description:` in their own front-matter; **0 do not** and appear as a bare path.
 
 _No markdown documents are tracked in this repo._
 
